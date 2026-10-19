@@ -1,0 +1,30 @@
+// Full TP2 example: the program prints an AST, not execution results.
+int a, b, i;
+a = 2 + 3 * 4;
+b = (2 + 3) * 4;
+print("a and b", a, b);
+
+if (a < b) {
+    print("a is smaller", a);
+} else {
+    print("a is not smaller");
+}
+
+while (a > 0) {
+    a = a - 1;
+}
+
+for (i = 0; i < 3; i = i + 1) {
+    print("i", i);
+}
+
+switch (i) {
+    case 0:
+        print("zero");
+        break;
+    case 3:
+        print("three");
+        break;
+    default:
+        print("other");
+}

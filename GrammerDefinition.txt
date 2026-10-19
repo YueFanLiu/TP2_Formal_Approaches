@@ -1,0 +1,78 @@
+(* == C++ like pseudo code (EBNF) ==
+   Authors: Mouzheng LI and Yuefan LIU
+*)
+
+(* == Program == *)
+Program = { Statement } ;
+
+(* == Basic Elements == *)
+Digit = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" ;
+Letter = "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J"
+       | "K" | "L" | "M" | "N" | "O" | "P" | "Q" | "R" | "S" | "T"
+       | "U" | "V" | "W" | "X" | "Y" | "Z"
+       | "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j"
+       | "k" | "l" | "m" | "n" | "o" | "p" | "q" | "r" | "s" | "t"
+       | "u" | "v" | "w" | "x" | "y" | "z" ;
+
+IDENTIFIER = Letter { Letter | Digit | "_" } ;
+Number = Digit { Digit } ;
+String = '"' { StringCharacter } '"' ;
+StringCharacter = ? any single source character except double quote, CR or LF ? ;
+(* Strings are single-line; escape sequences are not interpreted. *)
+
+(* == Operator == *)
+CompareOperator = ">" | "<" | ">=" | "<=" | "==" | "!=" ;
+
+(* == Expression == *)
+Expression = Term { ("+" | "-") Term } ;
+Term = Factor { ("*" | "/") Factor } ;
+Factor = IDENTIFIER | Number | "(" Expression ")" ;
+
+(* == Condition == *)
+Condition = Expression CompareOperator Expression ;
+
+(* == Statement == *)
+Statement = Declaration
+          | Assignment
+          | PrintStatement
+          | IfStatement
+          | WhileStatement
+          | ForStatement
+          | SwitchStatement ;
+
+Declaration = "int" IDENTIFIER { "," IDENTIFIER } ";" ;
+AssignmentCore = IDENTIFIER "=" Expression ;
+Assignment = AssignmentCore ";" ;
+
+PrintStatement = "print" "(" (IDENTIFIER | String) { "," (IDENTIFIER | String) } ")" ";" ;
+
+(* == Control flow statement == *)
+IfStatement    = "if" "(" Condition ")" "{" { Statement } "}"
+                 [ "else" "{" { Statement } "}" ] ;
+
+WhileStatement = "while" "(" Condition ")" "{" { Statement } "}" ;
+
+ForStatement   = "for" "(" [ AssignmentCore ] ";"
+                          [ Condition ] ";"
+                          [ AssignmentCore ] ")"
+                 "{" { Statement } "}" ;
+
+SwitchStatement = "switch" "(" IDENTIFIER ")" "{"
+                    { "case" Number ":" { Statement } [ BreakStatement ] }
+                    [ "default" ":" { Statement } [ BreakStatement ] ]
+                  "}" ;
+BreakStatement = "break" ";" ;
+
+(* == Comment == *)
+Comment = "//" { CommentCharacter } ( Newline | EndOfFile ) ;
+CommentCharacter = ? any single source character except CR or LF ? ;
+EndOfFile = ? end of input ? ;
+
+(* == Whitespace == *)
+(* \t, \n and \r denote tab, LF and CR.
+   Whitespace and comments are ignored between tokens, but not inside strings. *)
+Newline = "\n" | "\r\n" ;
+Whitespace = " " | "\t" | Newline ;
+
+(* int, if, else, while, for, switch, case, default, break and print
+   are reserved keywords and cannot be used as variable names. *)
